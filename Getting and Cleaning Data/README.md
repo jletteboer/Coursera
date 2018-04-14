@@ -11,7 +11,7 @@ The CodeBook.md file describes the variables, the data, and any transformations 
 Very simple.... The script will do everything for you. :) It will
 
 - install the required packages if needed;
-- create the project directory called "~/Data Analysis/Coursera/Getting and Cleaning Data";
+- create the project directory called "./Getting and Cleaning Data";
 - download the data source and store it into the project folder;
 - create a data direcory in the project folder;
 - unzip the downloaded file to the data directory;
