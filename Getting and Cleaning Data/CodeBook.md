@@ -91,7 +91,7 @@ There are 5 parts:
 Very simple.... The script will do everything for you. :) It will:
 
 1. install the required packages;
-2. create the project directory called "~/Data Analysis/Coursera/Getting and Cleaning Data";
+2. create the project directory called "./Getting and Cleaning Data";
 3. download the data source and store it into the project folder;
 4. create a data direcory in the project folder;
 5. unzip the downloaded file to the data directory;
