@@ -386,9 +386,9 @@ head(agg)</code></pre>
 <pre class="r"><code>ts &lt;- activity %&gt;% 
   group_by(interval) %&gt;%
   summarize(steps=mean(steps, na.rm = T)) %&gt;%
-  na.omit()</code></pre>
-<pre><code>## Warning: package 'bindrcpp' was built under R version 3.4.4</code></pre>
-<pre class="r"><code>plot(ts, type = &quot;l&quot;, lwd=&quot;2&quot;,
+  na.omit()
+
+plot(ts, type = &quot;l&quot;, lwd=&quot;2&quot;,
      col = &quot;lightblue&quot;,
      xlab = &quot;5-min interval&quot;, 
      ylab = &quot;Average all days&quot;, 

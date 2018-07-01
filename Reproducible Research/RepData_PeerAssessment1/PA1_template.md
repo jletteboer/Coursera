@@ -119,13 +119,7 @@ ts <- activity %>%
   group_by(interval) %>%
   summarize(steps=mean(steps, na.rm = T)) %>%
   na.omit()
-```
 
-```
-## Warning: package 'bindrcpp' was built under R version 3.4.4
-```
-
-```r
 plot(ts, type = "l", lwd="2",
      col = "lightblue",
      xlab = "5-min interval", 
