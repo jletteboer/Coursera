@@ -7,3 +7,4 @@
 **/specdata/*.csv
 **/data/**
 **/tidydata.txt
+*.Rproj
