@@ -89,7 +89,7 @@ hist(agg$steps,
      main = "Total steps per day")
 ```
 
-![](PA1_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ##### 2. Calculate and report the mean and median total number of steps taken per day
 
@@ -133,7 +133,7 @@ plot(ts, type = "l", lwd="2",
      main = "Average number of steps")
 ```
 
-![](PA1_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ##### 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -203,7 +203,7 @@ hist(agg1$steps,
      main = "Total steps per day")
 ```
 
-![](PA1_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 The mean and median are:
 
@@ -284,5 +284,5 @@ xyplot(steps ~ interval | daytype,
        ylab = "Number of steps")
 ```
 
-![](PA1_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
