@@ -12,3 +12,4 @@
 *.csv
 *.bz2
 *.code-workspace
+.Rproj.user
