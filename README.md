@@ -12,6 +12,6 @@ This repository contains programming assigments (or attempts) of Coursera Course
 05. [Reproducible Research](https://github.com/jletteboer/Coursera/tree/master/05%20Reproducible%20Research)
 06. [Statistical Inference](https://github.com/jletteboer/Coursera/tree/master/06%20Statistical%20Inference)
 07. [Regression Models](https://github.com/jletteboer/Coursera/tree/master/07%20Regression%20Models)
-08. [Practical Machine Learning]
-09. [Developing Data Products]
-10. [Data Science Capstone]
+08. [Practical Machine Learning]()
+09. [Developing Data Products]()
+10. [Data Science Capstone]()
