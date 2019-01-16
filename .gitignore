@@ -11,3 +11,4 @@
 **/tidydata.txt
 *.csv
 *.bz2
+*.code-workspace
