@@ -1,0 +1,130 @@
+---
+title: "Statistical Inference Course Project - Part 2"
+author: "John Letteboer"
+date: "10/21/2018"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+    #theme: cosmo
+---
+
+## Synopsis
+This is the project for the statistical inference class. In it, you will use simulation to explore inference and do some simple inferential data analysis. The project consists of two parts:
+
+1. A simulation exercise.
+2. Basic inferential data analysis.
+
+We're going to analyze the ToothGrowth data in the R datasets package. You should  
+
+1. Load the ToothGrowth data and perform some basic exploratory data analyses
+2. Provide a basic summary of the data.
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+4. State your conclusions and the assumptions needed for your conclusions.
+
+## Question 1
+**Load the ToothGrowth data and perform some basic exploratory data analyses**  
+```{r}
+data(ToothGrowth)
+tg <- ToothGrowth 
+# convert dose to factor
+tg$dose <- as.factor(tg$dose)
+
+# string
+str(tg)
+# head
+head(tg,2)
+# table
+table(tg$dose, tg$supp)
+```
+
+## Question 2
+**Provide a basic summary of the data.**  
+```{r}
+# summary
+summary(tg)
+```
+
+Let's plot the data
+```{r}
+library(ggplot2)
+require(gridExtra)
+plot1 <- ggplot(data=tg, aes(x=dose, y=len, fill=supp)) + 
+    geom_bar(stat="identity") + 
+    facet_grid(. ~ supp) + 
+    xlab("Dose in miligrams") + ylab("Tooth Length") + 
+    guides(fill=FALSE)
+
+plot2 <- ggplot(data=tg, aes(x=dose, y=len, fill=dose)) + 
+    geom_boxplot() + 
+    xlab("Dose in miligrams") + ylab("Tooth length") + 
+    guides(fill=FALSE)
+
+plot3 <- ggplot(data=tg, aes(x=supp, y=len, fill=supp)) + 
+    geom_boxplot() + 
+    xlab("Supplement type") + ylab("Tooth length") + 
+    guides(fill=FALSE)
+
+plot4 <- ggplot(data=tg, aes(x=supp, y=len, fill=supp)) + 
+    geom_boxplot() + 
+    facet_grid(. ~ dose) + 
+    xlab("Supplement type") + ylab("Tooth Length") + 
+    guides(fill=FALSE)
+
+grid.arrange(plot1, plot2, plot3, plot4, ncol=2)
+
+```
+
+## Question 3
+**Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)**  
+What statustical test are we going to use, we could use T-test or Analysis of Variance (ANOVA). T-test is limited to comparing means of two groups, one-way ANOVA can compare more than two groups. 
+
+Let's do some test based on Analysis of Variance (ANOVA).
+```{r}
+an <- aov(len ~ supp * dose, data=tg)
+summary(an)
+```
+This table confirms that there are differences between the groups. We see the following between the groups:
+
+`len` and `supp` = `F(1,54)=15.572;p<0`  
+`len` and `dose` = `F(2,54)=92.000;p<0`  
+`supp` and `dose` = `F(2,54)=4.107;p<0.05`  
+
+There is a minor interaction between the combination of supplement type `supp` and dosage `dose`.
+
+Let's do a Post Hoc test with Tukey HSD (Honestly Significant Difference).
+```{r}
+TukeyHSD(an)
+```
+There are significant differences between each of the groups in `supp:dose`. These are not significant:  
+
+`VC:0.5-OJ:0.5`, `VC:1-OJ:0.5`, `OJ:2-OJ:1`, `VC:2-OJ:1` and `VC:2-OJ:2`   
+
+The function confint is used to calculate confidence intervals on the treatment parameters, by default 95% confidence intervals:
+```{r}
+confint(an)
+```
+
+And computes the summary tables for model fits of the mean response for each combinations of levels of the factors in a term
+```{r}
+print(model.tables(an,"means"),digits=3)
+```
+
+## Question 4
+**State your conclusions and the assumptions needed for your conclusions.**  
+
+*Conclusions*
+
+1. Length and supplement, the p-value is less than 0.05, so supplement alone type has effect on tooth growth.
+2. Length and dosage, the p-value is less the 0.05, so dosage alone has effect on tooth growth.
+3. Lendth and a combination of supplement and dosage, the p-value is also less than 0.05, there is a minor interaction.
+
+Supplement type has a influence, but `OJ` has a greater average teethgrowth in combination with dosages `0.5` and `1` then for the `VC` supplement, while teeth length for the `VC` supplement and `OJ` in combiantion with dosage `2` has no significant effect (almost the same mean & confidence interval).
+
+*Assumptions*
+
+- The experiment was done with random assignment of guinea pigs to different dose level categories and supplement type to control for confounders that might affect the outcome.
+- Members of the sample population, i.e. the 60 guinea pigs, are representative of the entire population of guinea pigs. This assumption allows us to generalize the results.
+- The data is normal distributed.

@@ -1,0 +1,123 @@
+---
+title: "Motor Trend Course Project Analysis"
+author: "John Letteboer"
+date: "11/25/2018"
+output:
+  pdf_document: 
+  latex_engine: xelatex
+html_document:
+  fig_caption: yes
+keep_md: yes
+---
+
+## Executive Summary
+In this project, we analyze the `mtcars` (Motor Trend Car Road Tests) data set and explore the relationship between a set of variables and miles per gallon (MPG). The data was extracted from the 1974 Motor Trend US Magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-74 models). The main focus of the project is to answer the following questions:
+
+* Is an automatic or manual transmission better for MPG.
+* Quantify the MPG difference between automatic and manual transmissions.
+
+Exploratory analysis and visualizations are located in the Appendix to this document.
+
+## Data prep
+Load the data and do some checks.
+```{r message=FALSE}
+data(mtcars)
+dim(mtcars)
+head(mtcars,3)
+str(mtcars)
+```
+
+
+## Exploratory Analysis
+Let's check the summary of the variable "mpg".
+```{r}
+summary(mtcars$mpg)
+```
+
+Let's check automatic and manual seperate
+```{r}
+summary(mtcars$mpg[mtcars$am==0])
+summary(mtcars$mpg[mtcars$am==1])
+```
+
+To see a significant difference in the mean of “mpg” for automatic and manual transmission let's do a T-Test and show the estimate. See Appendix A.1 for the T-Test and A.2 for the boxplot.
+```{r}
+t <- t.test(mpg ~ am, data=mtcars)
+t$estimate
+t$p.value
+```
+
+The p-value is `r t$p.value`, so we reject the null hypothesis.
+
+Let's check the correlations.
+```{r}
+cor(mtcars[1], mtcars[2:11] )
+```
+
+According to the correlation table, there are at least four variables with a high correlation to our outcome variable “mpg”. The highest value comes from the weight variable “wt”. Let’s have a look to this variable separately for automatic (0) and manual (1) transmission in Appendix A.3.
+
+## Linear Models
+The linear dependencies suggest to analyse linear models as follows:
+```{r}
+fit1 <- lm(mpg ~ am , data = mtcars) 
+fit2 <- lm(mpg ~ am + wt, data = mtcars) 
+fit3 <- lm(mpg ~ am + wt + hp , data = mtcars) 
+fit4 <- lm(mpg ~ am + wt + hp+ disp, data = mtcars) 
+fit5 <- lm(mpg ~ ., data = mtcars) 
+```
+
+We start with the variable “mpg” as a function of the vairable “am” add one variable after another and do the ANOVA routine (see Appendix A.4) to find the simplest modell that explains significantly the change in “mpg”. I didn’t take the variable “cyl” for its high corellation with the variable “disp”. We see that adding the variables “wt” and “hp” significantly improve the model, so it’s the modell “fit3” which we use further. In Appendix A.5 you find the correlations of the four variables “used”. In Appendix A.6 you find the summay of the modell “fit3” that explans about 84% of the variability of the variable “mpg”.
+
+Let’s turn to the residuals of modell “fit3”. In Appendix A.7 you find the plot of the residuals. It seems that some “outliers” should be analized more carefully but over all the fit of modell “fit3” and its residuals seem to satisfy basic requirement for a linear modell to explain the variation of the variable “mpg”.
+
+## Conclusion
+
+**Is an automatic or manual transmission better for MPG?**
+
+It appears that manual transmission cars are better for MPG compared to automatic cars. However when modeled with confounding variables like displacement, HP and weight, the difference is not as significant as it seems in the beginning: a big part of the difference is explained by other variables.
+
+**Quantify the MPG difference between automatic and manual transmissions**
+
+Analysis shows that when only transmission was used in the model manual cars have an mpg increase of 7.245. However, when variables wt and hp are included, the manual car advantage drops to 2.084 with other variables contributing, sometimes more (e.g. weight) to the effect.
+
+## Appendix
+### A.1 t-Test for the variable “mpg” for Automatic and Manual Transmission
+```{r echo=FALSE}
+t
+```
+
+### A.2 Boxplot: Mean of the variable “mpg” for Automatic and Manual Transmission
+```{r message=FALSE}
+boxplot(mtcars$mpg ~ mtcars$am, xlab="Transmission", ylab="MPG", col=c("blue","green"))
+```
+
+### A.3 Coplot: Dependencies of weight for Automatic and Manual Transmission
+```{r}
+coplot(mpg ~ wt | as.factor(am), data = mtcars, panel = panel.smooth, rows = 1)
+```
+
+There seems to be a quite linear dependency that differs in function of the variable “am”.
+
+### A.4 ANOVA
+```{r}
+anova(fit1, fit2, fit3, fit4, fit5)
+```
+
+### A.5 Correlation of the variables of the Model “fit3”
+```{r message=FALSE}
+library(psych)
+mtcars_vars <- mtcars[, c(1, 9, 6, 4)]
+pairs.panels(mtcars_vars, method = "pearson", hist.col = "#00AFBB", ellipses = FALSE)
+```
+
+### A.6 Summary of the Model “fit3”
+```{r echo=FALSE}
+summary(fit3)
+```
+
+### A.7 Plot of the Residuals of the Model “fit3”
+```{r}
+par(mfrow = c(2,2))
+plot(fit3)
+```
+
