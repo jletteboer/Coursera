@@ -1,10 +1,11 @@
 ---
-html_document:
-  fig_caption: yes
-author: "John Letteboer"
-date: "29/01/2019"
-keep_md: yes
 title: "Practical Machine Learning"
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: true
+author: "John Letteboer"
+date: "03/02/2019"
 ---
 
 ## Background
