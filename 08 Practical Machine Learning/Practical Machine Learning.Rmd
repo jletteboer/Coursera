@@ -1,0 +1,197 @@
+---
+html_document:
+  fig_caption: yes
+author: "John Letteboer"
+date: "29/01/2019"
+keep_md: yes
+title: "Practical Machine Learning"
+---
+
+## Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset). 
+
+## Executive Summary
+
+The goal of your project is to predict the manner in which they did the exercise. This is the "classe" variable in the training set. You may use any of the other variables to predict with. You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases. 
+
+## Data Preparation
+
+The training data for this project are available here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment. 
+
+# Loading libraries and data
+```{r message=FALSE}
+library(caret)
+library(dplyr)
+library(rpart)
+library(rattle)
+```
+
+Load data and check the dimensions.
+```{r}
+train_org <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
+test_org <-  read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")
+dim(train_org)
+dim(test_org)
+```
+
+The training set has **`r dim(train_org)[1]`** observations and **`r dim(train_org)[2]`** variables and the testing set has **`r dim(test_org)[1]`** observations and **`r dim(test_org)[2]`** variables.
+
+# Data Cleaning
+Remove all near zero variance of all data. These variables have very unique values relative to the number of smaples.
+```{r}
+nzv <- nearZeroVar(train_org)
+train_nzv <- train_org[,-nzv]
+test_nzv <- test_org[,-nzv]
+dim(train_nzv)
+dim(test_nzv)
+```
+
+That changed the variables from **`r dim(train_org)[2]`** to **`r dim(train_nzv)[2]`**.
+
+Remove NA variables with a threshold over the 90% from the dataset.
+```{r}
+nas <- sapply(train_nzv, function(x) mean(is.na(x))) > 0.90
+TrainSet <- train_nzv[, nas==FALSE]
+TestSet  <- test_nzv[, nas==FALSE]
+dim(TrainSet)
+dim(TestSet)
+```
+
+This results in a decrease of varaibles with **`r dim(train_nzv)[2] - dim(TrainSet)[2]`**.
+
+Remove the X, user_name, timestamps and windows variables, they do not contribute much to the measurements.
+```{r}
+remove_cols <- grepl("^X|user_name|timestamp|window", names(TrainSet))
+TrainSet <- TrainSet[, !remove_cols]
+TestSet  <- TestSet[, !remove_cols]
+dim(TrainSet)
+dim(TestSet)
+```
+
+
+Check if there are different variables between the train and test set.
+```{r}
+print(paste("Variables in Train and not in Test: ",setdiff(colnames(TrainSet), colnames(TestSet))))
+print(paste("Variables in Test and not in Train: ",setdiff(colnames(TestSet), colnames(TrainSet))))
+```
+
+Test set has no ``classe`` and thats correct we want to predict this one, but Test set has a extra variable ``problem_id``, remove it from the test. 
+
+```{r}
+TestSet <- subset(TestSet, select=-c(problem_id))
+dim(TrainSet)
+dim(TestSet)
+```
+
+Create training and validation partitions from TrainSet for modeling.
+```{r}
+set.seed(613)
+inTrain  <- createDataPartition(TrainSet$classe, p=0.7, list=FALSE)
+TrainSet <- TrainSet[inTrain, ]
+ValSet   <- TrainSet[-inTrain, ]
+dim(TrainSet)
+dim(ValSet)
+```
+
+## Prediction Model Building
+```{r echo=FALSE, message=FALSE}
+# Enable Parallel in R with doParallel package 
+library(doParallel) 
+set.seed(613)
+n_cores <- detectCores() - 2  
+registerDoParallel(n_cores,cores=n_cores)
+#getDoParWorkers()
+```
+Three methods will be applied to model the Train dataset and the best one (with higher accuracy when applied to the Test dataset) will be used for the quiz predictions. 
+
+The methods are:
+
+- Decision Tree (rpart) 
+- Random Forest (rf)  
+- Stochastic Gradient Boosting (also known as Gradient Boosted Machine or GBM). 
+
+Each model is automatically tuned and is evaluated using 3 repeats of 10-fold cross validation. A Confusion Matrix is plotted at the end of each model to better visualize the accuracy of the models.
+
+The random number seed is set before each algorithm is trained to ensure that each algorithm gets the same data partitions and repeats. This allows us to compare apples to apples in the final results. 
+
+Setting the trainControl. 
+```{r}
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
+```
+
+### Decision Tree (rpart)
+Let start with a Decision Tree and visualize it.
+```{r}
+set.seed(613)
+fit.rpart <- train(classe ~ .,data=TrainSet, method="rpart", trControl=control)
+fancyRpartPlot(fit.rpart$finalModel)
+```
+
+Prediction on the Validation dataset.
+```{r}
+pred.rpart <- predict(fit.rpart, newdata=ValSet)
+cm.rpart <- confusionMatrix(pred.rpart, ValSet$classe)
+cm.rpart 
+```
+
+With Decision Tree, we reach an accuracy of **`r cm.rpart$overall[1]*100`**%. This is not so good, let’s see what we can do with Random Forest.
+
+### Random Forest
+```{r}
+set.seed(613)
+fit.rf <- train(classe ~ ., data=TrainSet, method="rf", trControl=control, ntree=150)
+plot(fit.rf$finalModel, main="Model error of Random Forest model by number of trees")
+```
+
+Prediction on Validation dataset.
+```{r}
+pred.rf <- predict(fit.rf, newdata=ValSet)
+cm.rf <- confusionMatrix(pred.rf, ValSet$classe)
+cm.rf
+```
+
+With Random Forest, we reach an accuracy of **`r cm.rf$overall[1]*100`**%. This is very good, let’s see what we can expect with Stochastic Gradient Boosting.
+
+### Stochastic Gradient Boosting (GBM)
+```{r}
+set.seed(613)
+fit.gbm <- train(classe ~ ., data=TrainSet, method="gbm", trControl=control, verbose = FALSE)
+plot(fit.gbm)
+```
+
+Prediction on Validation dataset.
+```{r}
+predict.gbm <- predict(fit.gbm, newdata=ValSet)
+cm.gbm <- confusionMatrix(predict.gbm, ValSet$classe)
+cm.gbm
+```
+
+With Stochastic Gradient Boosting, we reach an accuracy of **`r cm.gbm$overall[1]*100`**%. This is also good, let’s compare the models.
+
+## Compare Models
+```{r}
+results <- resamples(list(RPA=fit.rpart, RDF=fit.rf, GBM=fit.gbm))
+# summarize the distributions
+summary(results)
+# dot plots of results
+dotplot(results)
+```
+
+
+## Conclusion
+This shows that the Random Forest model is the best one. We will use it to predict the values of `classe` for the Test dataset.
+
+```{r}
+predict.final <- predict(fit.rf, newdata=TestSet)
+predict.final
+```
+
