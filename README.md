@@ -16,5 +16,7 @@ This repository contains programming assigments (or attempts) of Coursera Course
 
     [Practical Machine Learning (gh-page)](https://jletteboer.github.io/Coursera/Practical_Machine_Learning.html)
 
-09. Developing Data Products
+09. [Developing Data Products (Git)](https://github.com/jletteboer/Coursera/tree/master/09%20Developing%20Data%20Products)
+
+    [Developing Data Products (gh-page)](https://jletteboer.github.io/Coursera/Developing_Data_Products_-_Week_2.html)
 10. Data Science Capstone
