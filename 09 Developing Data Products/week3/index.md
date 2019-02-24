@@ -1,5 +1,5 @@
 ---
-title       : Developing Data Products - Week 3
+title       : Developing Data Products Week 3
 subtitle    : Visualizing Iris Data with Plotly
 author      : John Letteboer
 job         : 24-02-2019
@@ -10,6 +10,19 @@ widgets     : []            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
 ---
+
+<style>
+.title-slide {
+  background-color: #FFFFFF; /* #EDE0CF; ; #CA9F9D*/
+}
+.title-slide hgroup > h1{
+ font-family: 'Oswald', 'Helvetica', sanserif; 
+}
+.title-slide hgroup > h1, 
+.title-slide hgroup > h2 {
+  color: #ee7300 ;  /* ; #EF5150*/
+}
+</style>
 
 ## The used dataset
 In this presentation I will use the `iris` dataset. The Iris datasetcontains 
@@ -24,6 +37,9 @@ The plot shows petal length vs. petal width and coloured by species.
 
 <iframe src="iris_w_color.html" style="position:absolute;height:70%;width:70%"></iframe>
 
+---
+
+## The End - Thanks
 
 
 
