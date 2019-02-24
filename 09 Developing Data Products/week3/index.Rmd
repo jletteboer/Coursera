@@ -48,7 +48,7 @@ p <- plot_ly(iris, x = ~Petal.Length, y = ~Petal.Width,
         )
 htmlwidgets::saveWidget(as_widget(p), file = "iris_w_color.html")
 ```
-<iframe src="iris_w_color.html" style="position:absolute;height:70%;width:70%"></iframe>
+<iframe src="iris_w_color.html" style="position:absolute;height:60%;width:60%"></iframe>
 
 ---
 
