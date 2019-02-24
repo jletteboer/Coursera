@@ -35,7 +35,7 @@ The plot shows petal length vs. petal width and coloured by species.
 
 ## Visualizing the Data with Plotly
 
-<iframe src="iris_w_color.html" style="position:absolute;height:60%;width:60%"></iframe>
+<iframe src="iris_w_color.html" style="position:absolute;height:70%;width:70%"></iframe>
 
 ---
 
