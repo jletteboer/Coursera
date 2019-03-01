@@ -38,11 +38,11 @@ dashboardPage(skin="yellow",
                   physical activity it’s about 70-85% of maximum.
                   <br><br>
                   <strong>Usage:</strong><br>
-                  Fill in your age, minimum ans maximum intensity with the sliders 
-                  and see what your maximum and target hware rates are.
+                  Fill in your age, minimum and maximum intensity with the sliders 
+                  and see what your maximum and target heart rates are.
                   <br><br>
                   <strong>Sources:</strong><br>
-                  <sup>1</sup>Target Heart Rate and Estimated Maximum Heart 
+                  <sup>1</sup> Target Heart Rate and Estimated Maximum Heart 
                   Rate, <a target=\"_blank\" href=\"https://www.cdc.gov/physicalactivity/basics/measuring/heartrate.htm\">
                   Centers for Disease Control website</a>
                   "
