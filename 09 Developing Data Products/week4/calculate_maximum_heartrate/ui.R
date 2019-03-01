@@ -21,7 +21,21 @@ dashboardPage(skin="yellow",
                   collapsible = FALSE,
                   width = 12,
                   "Coursera Developing Data Products - Assignment week 4",
-                  footer = "Welcome to the Heart Rate Maximum calculator!"
+                  footer = tags$div(
+                    HTML(
+                      "Welcome to the Heart Rate Maximum calculator!
+                      <br><br>
+                      <a href=\"https://www.linkedin.com/in/johnletteboer/\">
+                        <i class=\"fa fa-linkedin-square fa-3x\" style=\"color:#f39c12\"></i>
+                      </a>
+                      <a href=\"https://github.com/jletteboer\">
+                        <i class=\"fa fa-github-square\" style=\"font-size:42px;color:#f39c12\"></i>
+                      </a>
+                      <a href=\"https://twitter.com/jletteboer\">
+                        <i class=\"fa fa-twitter-square\" style=\"font-size:42px;color:#f39c12\"></i>
+                      </a>"
+                    )
+                  )
                 )
               )
       ),
