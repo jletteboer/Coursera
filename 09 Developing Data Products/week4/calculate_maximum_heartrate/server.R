@@ -26,7 +26,6 @@ function(input, output, session) {
       color = "yellow"
     )
   })
-  output$rng <- renderText(input$range)
 }
 
 
