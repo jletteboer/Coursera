@@ -14,3 +14,4 @@
 *.code-workspace
 .Rproj.user
 *_cache/
+**/rsconnect/**
