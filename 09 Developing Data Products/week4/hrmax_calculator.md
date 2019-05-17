@@ -22,6 +22,8 @@ The application includes:
 
 This app is hosted at https://jletteboer.shinyapps.io/calculate_maximum_heartrate/
 
+The code can be found at https://github.com/jletteboer/Coursera/tree/master/09%20Developing%20Data%20Products
+
 Application widgets Used
 ========================================================
 This application uses the listed widgets below.
