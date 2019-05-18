@@ -8,6 +8,7 @@
 *.rdx
 **/specdata/*.csv
 **/data/**
+!**/shiny/predictNextWord/data/**
 **/tidydata.txt
 *.csv
 *.bz2
